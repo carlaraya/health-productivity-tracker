@@ -1,8 +1,22 @@
 version: '3.8'
 
 services:
- etl:
-  build:
-   context: ./etl
-  volumes:
-  - ./etl:/etl
+  etl:
+    build:
+      context: ./etl
+    volumes:
+      - ./etl:/etl
+      - ~/.local/share/evolution:/evolution/.local/share/evolution
+      - ~/.config/evolution:/evolution/.config/evolution
+  db:
+    image: postgres:14.1-alpine
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d
+      - ./db/secrets:/run/secrets
+    restart: always
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/POSTGRES_PASSWORD.secret
+      POSTGRES_USER: etl
+      POSTGRES_DB: warehouse
+    ports:
+      - 5432:5432

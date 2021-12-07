@@ -1,7 +1,8 @@
 import json
 import sys
-import fitbit
 from datetime import datetime, timedelta
+import fitbit
+import calendar_parse
 
 def main():
     isUntil = False
@@ -19,17 +20,42 @@ def main():
     else:
         date = args[1]
 
-    # Get dictionary of response objects
-    if isUntil:
-        responses = fitbit.request_log_until(date)
+    sources = ['fitbit', 'calendar']
+    isFitbit = False
+    isCalendar = False
+    if 'all' in args or len(set(sources).intersection(set(args))) == 0:
+        isFitbit = True
+        isCalendar = True
     else:
-        responses = [fitbit.request_log(date)]
+        if 'fitbit' in args:
+            isFitbit = True
+        if 'calendar' in args:
+            isCalendar = True
 
-    for responsesDict in responses:
-        for logType in fitbit.FITBIT_DATA_PATHS:
-            with open(f'data-lake/{responsesDict["date"]}-{logType}.json', 'w') as jsonFile:
-                jsonString = json.dumps(responsesDict[logType].json(), indent=2)
+    if isFitbit:
+        # Get dictionary of response objects
+        if isUntil:
+            responses = fitbit.request_log_until(date)
+        else:
+            responses = [fitbit.request_log(date)]
+
+        # extract json from response object and dump to json file
+        for responsesDict in responses:
+            for logType in fitbit.FITBIT_DATA_PATHS:
+                with open(f'data-lake/{responsesDict["date"]}-{logType}.json', 'w') as jsonFile:
+                    jsonString = json.dumps(responsesDict[logType].json(), indent=2)
+                    jsonFile.write(jsonString) 
+
+    if isCalendar:
+        if isUntil:
+            eventsPerDay = calendar_parse.get_events_until(date)
+        else:
+            eventsPerDay = [calendar_parse.get_events(date)]
+        for eventsDict in eventsPerDay:
+            with open(f'data-lake/{eventsDict["date"]}-calendar.json', 'w') as jsonFile:
+                jsonString = json.dumps(eventsDict, indent=2)
                 jsonFile.write(jsonString) 
+
 
 if __name__ == '__main__':
     main()

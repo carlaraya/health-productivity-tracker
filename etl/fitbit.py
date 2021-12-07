@@ -11,7 +11,7 @@ with open('secrets/FITBIT_ACCESS_TOKEN.secret', 'r') as secretFile:
 with open('secrets/FITBIT_USER_ID.secret', 'r') as secretFile:
     FITBIT_USER_ID = secretFile.read().strip()
 
-JOIN_DATE = '2021-11-24'
+JOIN_DATE = '2021-11-25'
 
 FITBIT_DOMAIN = 'https://api.fitbit.com'
 FITBIT_DATA_PATHS = {
