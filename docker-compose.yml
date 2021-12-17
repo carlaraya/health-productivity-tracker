@@ -13,6 +13,7 @@ services:
     volumes:
       - ./db/init:/docker-entrypoint-initdb.d
       - ./db/secrets:/run/secrets
+      - ./db/data:/var/lib/postgresql/data
     restart: always
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/POSTGRES_PASSWORD.secret

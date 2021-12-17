@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 
 EVOLUTION_ICS_FILE = '/evolution/.local/share/evolution/calendar/%s/calendar.ics'
 EVOLUTION_CONFIG_DIR = '/evolution/.config/evolution/sources/'
-JOIN_DATE = '2021-11-25'
 
 def get_calendar_names_to_ids_dict():
     # generate dict with displayname mapped to id
@@ -19,8 +18,11 @@ def get_calendar_names_to_ids_dict():
             }
     return calendarsDict
 
+def get_events_date_range(startdate, date):
+    return (get_events(d) for d in date_range(startdate, date))
 
 def get_events(date):
+    print('Mining data from calendar for date: ' + date)
     calendarsDict = get_calendar_names_to_ids_dict()
     # assign todo and done calendar ids to variable
     calendars = ['Todo', 'Done']
@@ -39,12 +41,9 @@ def get_events(date):
             'totalTasks': len(eventsDict['Todo']) + len(eventsDict['Done'])
             }
 
-def get_events_until(date):
-    return [get_events(d) for d in date_range(JOIN_DATE, date)]
-
 def date_range(start, end, step=1):
     currDate = datetime.strptime(start, '%Y-%m-%d')
     endDate = datetime.strptime(end, '%Y-%m-%d')
-    while currDate < endDate:
+    while currDate <= endDate:
         yield datetime.strftime(currDate, '%Y-%m-%d')
         currDate += timedelta(step)

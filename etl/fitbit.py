@@ -11,8 +11,6 @@ with open('secrets/FITBIT_ACCESS_TOKEN.secret', 'r') as secretFile:
 with open('secrets/FITBIT_USER_ID.secret', 'r') as secretFile:
     FITBIT_USER_ID = secretFile.read().strip()
 
-JOIN_DATE = '2021-11-25'
-
 FITBIT_DOMAIN = 'https://api.fitbit.com'
 FITBIT_DATA_PATHS = {
         'sleep': f'/1.2/user/{FITBIT_USER_ID}/sleep/date/%s.json',
@@ -20,7 +18,7 @@ FITBIT_DATA_PATHS = {
         }
 HEADERS = { 'Authorization': f'Bearer {FITBIT_ACCESS_TOKEN}' }
 
-def request_log_until(date, logType='all'):
+def request_log_date_range(startdate, date, logType='all'):
     """
     Returns: an array of dictionaries containing a date & response object for each log type in FITBIT_DATA_PATHS starting from JOIN_DATE until the date parameter (excluding)
     Example:
@@ -30,7 +28,7 @@ def request_log_until(date, logType='all'):
       {'date': '2021-11-26', 'sleep': <response object>, 'activity': <response object>},
     ]
     """
-    return [request_log(d, logType) for d in date_range(JOIN_DATE, date)]
+    return (request_log(d, logType) for d in date_range(startdate, date))
 
 def request_log(date, logType='all'):
     if logType == 'all':
@@ -39,7 +37,7 @@ def request_log(date, logType='all'):
         return {logType: request_log_of_type(date, logType)} | {'date': date}
 
 def request_log_of_type(date, logType):
-    print(f'Requesting FitBit log of {logType} at {date}')
+    print(f'Requesting FitBit log of {logType} for date: {date}')
     url = FITBIT_DOMAIN + FITBIT_DATA_PATHS[logType] % date
     return requests.get(url, headers=HEADERS)
 
@@ -47,6 +45,6 @@ def request_log_of_type(date, logType):
 def date_range(start, end, step=1):
     currDate = datetime.strptime(start, '%Y-%m-%d')
     endDate = datetime.strptime(end, '%Y-%m-%d')
-    while currDate < endDate:
+    while currDate <= endDate:
         yield datetime.strftime(currDate, '%Y-%m-%d')
         currDate += timedelta(step)
