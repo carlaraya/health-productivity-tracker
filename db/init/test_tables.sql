@@ -1,3 +1,4 @@
+/*
 CREATE TABLE test_departments (
     id      INT PRIMARY KEY     NOT NULL,
     name        VARCHAR(50)     NOT NULL
@@ -25,3 +26,4 @@ INSERT INTO test_people (id, name, age, salary, department_id) VALUES
 (4, 'Dan', 22, 910000, 1),
 (5, 'Eve', 38, 1000, 2),
 (6, 'Frederick', 42, 200, 3);
+*/

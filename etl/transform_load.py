@@ -1,6 +1,7 @@
 import json
 from datetime import datetime, timedelta
 import argparse
+import psycopg2
 
 import fitbit
 import calendar_parse
@@ -33,35 +34,39 @@ def main():
     elif not args.startdate:
         args.startdate = args.date
 
+    args.sourcetype = args.sourcetype or 'all'
+
     # dictionary with data sources as keys and booleans as values (whether user wants to query such data source).
     # Example: {'fitbit': True, 'calendar': False}
     willQuery = {source: source == args.datasource or not args.datasource for source in DATA_SOURCES}
 
+    connection, cur = connect_to_db()
 
     if willQuery['fitbit']:
-        # Get dictionary of response objects
-        responses = fitbit.request_log_date_range(args.startdate, args.date, args.sourcetype or 'all')
-
-        # extract json from response object and dump to json file
-        for responsesDict in responses:
-            for logType in ([args.sourcetype] if args.sourcetype else fitbit.FITBIT_DATA_PATHS):
-                fname = f'data-lake/{responsesDict["date"]}-{logType}.json'
-                print('Saving to file: ' + fname)
-                with open(fname, 'w') as jsonFile:
-                    jsonString = json.dumps(responsesDict[logType].json(), indent=2)
-                    jsonFile.write(jsonString) 
+        tuplesDict = fitbit.transform_date_range(args.startdate, args.date, args.sourcetype)
+        fitbit.load(tuplesDict, connection, cur)
 
     if willQuery['calendar']:
-        # Get dictionary of calendar summary per day
-        eventsPerDay = calendar_parse.get_events_date_range(args.startdate, args.date)
+        tuplesDict = calendar_parse.transform_date_range(args.startdate, args.date)
+        calendar_parse.load(tuplesDict, connection, cur)
 
-        for eventsDict in eventsPerDay:
-            fname = f'data-lake/{eventsDict["date"]}-calendar.json'
-            print('Saving to file: ' + fname)
-            with open(fname, 'w') as jsonFile:
-                jsonString = json.dumps(eventsDict, indent=2)
-                jsonFile.write(jsonString) 
+    if connection:
+        cur.close()
+        connection.close()
 
+def connect_to_db():
+    with open('secrets/POSTGRES_PASSWORD.secret', 'r') as secretFile:
+        POSTGRES_PASSWORD = secretFile.read().strip()
+    print('Connecting to DB')
+    connection = psycopg2.connect(user='etl', password=POSTGRES_PASSWORD, host='db', port='5432', database='warehouse')
+    cur = connection.cursor()
+    cur.execute('SELECT version()');
+
+    print('Connected to: ')
+    db_version = cur.fetchone()
+    print(db_version)
+
+    return (connection, cur)
 
 if __name__ == '__main__':
     main()

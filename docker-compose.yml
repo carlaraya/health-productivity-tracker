@@ -8,6 +8,8 @@ services:
       - ./etl:/etl
       - ~/.local/share/evolution:/evolution/.local/share/evolution
       - ~/.config/evolution:/evolution/.config/evolution
+    depends_on:
+      - db
   db:
     image: postgres:14.1-alpine
     volumes:
