@@ -2,3 +2,4 @@
 etl/data-lake/*.json
 db/data/*
 asdf.py
+secrets/metabase.env

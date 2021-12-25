@@ -7,10 +7,10 @@ import json
 from datetime import datetime, timedelta
 from functools import reduce
 
-with open('secrets/FITBIT_ACCESS_TOKEN.secret', 'r') as secretFile:
+with open('/run/secrets/FITBIT_ACCESS_TOKEN', 'r') as secretFile:
     FITBIT_ACCESS_TOKEN = secretFile.read().strip()
 
-with open('secrets/FITBIT_USER_ID.secret', 'r') as secretFile:
+with open('/run/secrets/FITBIT_USER_ID', 'r') as secretFile:
     FITBIT_USER_ID = secretFile.read().strip()
 
 FITBIT_DOMAIN = 'https://api.fitbit.com'

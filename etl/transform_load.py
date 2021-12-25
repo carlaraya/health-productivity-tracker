@@ -9,6 +9,10 @@ import calendar_parse
 EARLIEST_DATE = '2021-11-25'
 DATA_SOURCES = ['fitbit', 'calendar']
 
+with open('/run/secrets/POSTGRES_PASSWORD', 'r') as secretFile, open('/run/secrets/POSTGRES_USER', 'r') as secretUserFile:
+    POSTGRES_PASSWORD = secretFile.read().strip()
+    POSTGRES_USER = secretUserFile.read().strip()
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('date', type=str,
@@ -55,10 +59,8 @@ def main():
         connection.close()
 
 def connect_to_db():
-    with open('secrets/POSTGRES_PASSWORD.secret', 'r') as secretFile:
-        POSTGRES_PASSWORD = secretFile.read().strip()
     print('Connecting to DB')
-    connection = psycopg2.connect(user='etl', password=POSTGRES_PASSWORD, host='db', port='5432', database='warehouse')
+    connection = psycopg2.connect(user=POSTGRES_USER, password=POSTGRES_PASSWORD, host='db', port='5432', database='warehouse')
     cur = connection.cursor()
     cur.execute('SELECT version()');
 
