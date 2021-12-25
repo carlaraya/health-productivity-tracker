@@ -9,7 +9,7 @@ An ETL pipeline & data visualization for my sleep & todo list data.
 
 ## Installation
 1. Install Docker and Docker Compose.
-1. Install Evolution. Make sure Evolution has two calendars named `Todo` and `Done`. Evolution data files should be in `~/.local/share/evolution/` and `~/.config/evolution/`.
+1. Install Evolution. Make sure Evolution has two calendars named `Todo` and `Done`. Evolution data files should be in `~/.local/share/evolution/` and `~/.config/evolution/`. Or if installing on a cloud server, use a program to sync with the data from the local device.
 1. Get Fitbit credentials from https://dev.fitbit.com/apps/oauthinteractivetutorial. Select "Implicit Grant Flow".
 1. `secrets/` should contain all the sensitive data. Add these files in `secrets/`. All `.secret` files should contain only the secret text and nothing else.
     - `FITBIT_ACCESS_TOKEN.secret`
