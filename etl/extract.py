@@ -1,42 +1,12 @@
 import json
 from datetime import datetime, timedelta
-import argparse
 
+from helpers import handle_args, DATA_LAKE_PATH
 import fitbit
 import calendar_parse
 
-EARLIEST_DATE = '2021-11-25'
-DATA_SOURCES = ['fitbit', 'calendar']
-
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('date', type=str,
-                        help='Format: YYYY-MM-DD|yesterday|today. Specify the end date parameter of the query, or the only date to query if start-date is not specified. Can also be set to "yesterday" or "today".')
-    parser.add_argument('-s', '--startdate', type=str,
-                        help='Format: YYYY-MM-DD|earliest. Specify the start date parameter of the query. Can be set to "earliest", in order to query starting from the very first record.')
-    parser.add_argument('-d', '--datasource', type=str,
-                        help='Format: ' + '|'.join(DATA_SOURCES) + '. Data source to query, whether it is "fitbit", or "calendar". Will query all sources if unspecified.')
-    parser.add_argument('-t', '--sourcetype', type=str,
-                        help='Format: ' + '|'.join(fitbit.FITBIT_DATA_PATHS) + '. Fitbit source type to query, e.g. "sleep" or "activity". Will query all source types if unspecified.')
-    args = parser.parse_args()
-
-    # Clean up args. Turn date args into real dates, instead of words like 'today' or 'yesterday'.
-    if args.date == 'today':
-        today = datetime.now()
-        args.date = datetime.strftime(today, '%Y-%m-%d')
-    elif args.date == 'yesterday':
-        yesterday = datetime.now() - timedelta(1)
-        args.date = datetime.strftime(yesterday, '%Y-%m-%d')
-
-    if args.startdate == 'earliest':
-        args.startdate = EARLIEST_DATE
-    elif not args.startdate:
-        args.startdate = args.date
-
-    # dictionary with data sources as keys and booleans as values (whether user wants to query such data source).
-    # Example: {'fitbit': True, 'calendar': False}
-    willQuery = {source: source == args.datasource or not args.datasource for source in DATA_SOURCES}
-
+    args, willQuery = handle_args()
 
     if willQuery['fitbit']:
         # Get dictionary of response objects
@@ -45,7 +15,7 @@ def main():
         # extract json from response object and dump to json file
         for responsesDict in responses:
             for logType in ([args.sourcetype] if args.sourcetype else fitbit.FITBIT_DATA_PATHS):
-                fname = f'data-lake/{responsesDict["date"]}-{logType}.json'
+                fname = f'{DATA_LAKE_PATH}{responsesDict["date"]}-{logType}.json'
                 print('Saving to file: ' + fname)
                 with open(fname, 'w') as jsonFile:
                     jsonString = json.dumps(responsesDict[logType].json(), indent=2)
@@ -56,7 +26,7 @@ def main():
         eventsPerDay = calendar_parse.get_events_date_range(args.startdate, args.date)
 
         for eventsDict in eventsPerDay:
-            fname = f'data-lake/{eventsDict["date"]}-calendar.json'
+            fname = f'{DATA_LAKE_PATH}{eventsDict["date"]}-calendar.json'
             print('Saving to file: ' + fname)
             with open(fname, 'w') as jsonFile:
                 jsonString = json.dumps(eventsDict, indent=2)

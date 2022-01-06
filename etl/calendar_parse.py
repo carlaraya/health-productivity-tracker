@@ -4,6 +4,8 @@ import ics
 import json
 from datetime import datetime, timedelta
 
+from helpers import DATA_LAKE_PATH
+
 EVOLUTION_ICS_FILE = '/evolution/.local/share/evolution/calendar/%s/calendar.ics'
 EVOLUTION_CONFIG_DIR = '/evolution/.config/evolution/sources/'
 
@@ -69,7 +71,7 @@ def transform_date_range(startdate, date):
 
 def transform(date):
     print('Transforming calendar json data for date: ' + date)
-    fname = f'data-lake/{date}-calendar.json'
+    fname = f'{DATA_LAKE_PATH}{date}-calendar.json'
     with open(fname, 'r') as fobj:
         jsonDict = json.load(fobj)
         todoTasks = [(t, 'f', date) for t in jsonDict['Todo']] + \
@@ -79,7 +81,7 @@ def transform(date):
 
 def load(tuplesDict, connection, cur):
     for dbName in DB_TABLES_CORRECT_ORDER:
-        if dbName in tuplesDict:
+        if dbName in tuplesDict and len(tuplesDict[dbName]):
             tuples = tuplesDict[dbName]
             columnsStr = '(' + ','.join(DB_COLUMNS[dbName]) + ')'
             percentSes = '(' + ', '.join(['%s'] * len(DB_COLUMNS[dbName])) + ')' # returns '(%s, %s, %s, ...)'

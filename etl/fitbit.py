@@ -1,18 +1,16 @@
 """
 Handles Fitbit OAuth credentials & requests.
 """
-import base64
+import os
 import requests
 import json
 from datetime import datetime, timedelta
 from functools import reduce
 
-with open('/run/secrets/FITBIT_ACCESS_TOKEN', 'r') as secretFile:
-    FITBIT_ACCESS_TOKEN = secretFile.read().strip()
+FITBIT_ACCESS_TOKEN = os.getenv('FITBIT_ACCESS_TOKEN')
+FITBIT_USER_ID = os.getenv('FITBIT_USER_ID')
 
-with open('/run/secrets/FITBIT_USER_ID', 'r') as secretFile:
-    FITBIT_USER_ID = secretFile.read().strip()
-
+DATA_LAKE_PATH = 'data-lake/'
 FITBIT_DOMAIN = 'https://api.fitbit.com'
 FITBIT_DATA_PATHS = {
         'sleep': f'/1.2/user/{FITBIT_USER_ID}/sleep/date/%s.json',
@@ -79,7 +77,7 @@ def transform(date, sourceType='all'):
 
 def transform_by_type(date, sourceType):
     print(f'Transforming json file of {sourceType} for date: {date}')
-    fname = f'data-lake/{date}-{sourceType}.json'
+    fname = f'{DATA_LAKE_PATH}{date}-{sourceType}.json'
     returnDict = {}
     with open(fname, 'r') as fobj:
         jsonDict = json.load(fobj)
@@ -104,7 +102,7 @@ def transform_by_type(date, sourceType):
             isMainSleep = 8
 
             totalSleepRecords = len(sleepRecords)
-            if totalSleepRecords == 0:
+            if all(not s[isMainSleep] for s in sleepRecords):
                 sleepSummary = [(
                     date,
                     totalSleepRecords,

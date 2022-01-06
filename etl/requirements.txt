@@ -1,3 +1,5 @@
 requests==2.26.0
 ics==0.7
 psycopg2-binary==2.9.2
+apache-airflow==2.2.3
+python-dotenv==0.19.2

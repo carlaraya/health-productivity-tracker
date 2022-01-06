@@ -6,34 +6,28 @@ services:
     volumes:
       - ./db/init:/docker-entrypoint-initdb.d
       - ./db/data:/var/lib/postgresql/data
-    restart: always
     environment:
-      POSTGRES_PASSWORD_FILE: /run/secrets/POSTGRES_PASSWORD
-      POSTGRES_USER_FILE: /run/secrets/POSTGRES_USER
       POSTGRES_DB: warehouse
     ports:
       - 5432:5432
-    networks:
-      - common
-    secrets:
-      - POSTGRES_PASSWORD
-      - POSTGRES_USER
+    env_file: secrets/postgres.env
+    restart: always
   etl:
     build:
       context: ./etl
     volumes:
       - ./etl:/etl
+      - ./etl/airflow/dags:/airflow/home/dags
+      - ./etl/airflow/airflow.cfg:/airflow/home/airflow.cfg
       - ~/.local/share/evolution:/evolution/.local/share/evolution
       - ~/.config/evolution:/evolution/.config/evolution
+    ports:
+      - 8080:8080
     depends_on:
       - db
-    networks:
-      - common
-    secrets:
-      - POSTGRES_PASSWORD
-      - POSTGRES_USER
-      - FITBIT_USER_ID
-      - FITBIT_ACCESS_TOKEN
+    env_file:
+      - secrets/fitbit.env
+      - secrets/postgres.env
   metabase:
     image: metabase/metabase:latest
     volumes:
@@ -46,23 +40,6 @@ services:
       MB_DB_PORT: 5432
       MB_DB_HOST: db
     env_file: secrets/metabase.env
-    networks: 
-      - common
     depends_on:
       - db
-    secrets:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-networks:
-  common:
-    driver: bridge
-
-secrets:
-  POSTGRES_USER:
-    file: secrets/POSTGRES_USER.secret
-  POSTGRES_PASSWORD:
-    file: secrets/POSTGRES_PASSWORD.secret
-  FITBIT_USER_ID:
-    file: secrets/FITBIT_USER_ID.secret
-  FITBIT_ACCESS_TOKEN:
-    file: secrets/FITBIT_ACCESS_TOKEN.secret
+    restart: always

@@ -1,5 +1,6 @@
-*.secret
 etl/data-lake/*.json
 db/data/*
 asdf.py
+secrets/fitbit.env
 secrets/metabase.env
+secrets/postgres.env
