@@ -6,21 +6,29 @@ An ETL pipeline & data visualization for my sleep & todo list data.
 - Loads the data into a PostgreSQL DB.
 - Uses Metabase to visualize the data. Shows correlations between daily sleep time and productivity.
   - Productivity is quantified with the formula `finished_tasks * (finished_tasks / planned_tasks)`
+- Airflow server runs ETL pipeline daily
+  - Makes sure tasks are run sequentially and enforces task dependencies (e.g. transform and load scripts cannot be run if extraction step errors)
+  - Logs failures to help with bugfixing
 
 ## Installation
 1. Install Docker and Docker Compose.
 1. Install Evolution. Make sure Evolution has two calendars named `Todo` and `Done`. Evolution data files should be in `~/.local/share/evolution/` and `~/.config/evolution/`. Or if installing on a cloud server, use a program to sync with the data from the local device.
 1. Get Fitbit credentials from https://dev.fitbit.com/apps/oauthinteractivetutorial. Select "Implicit Grant Flow".
-1. `secrets/` should contain all the sensitive data. Add these files in `secrets/`. All `.secret` files should contain only the secret text and nothing else.
-    - `FITBIT_ACCESS_TOKEN.secret`
-    - `FITBIT_USER_ID.secret`
-    - `POSTGRES_PASSWORD.secret`
-    - `POSTGRES_USER.secret`
+1. `secrets/` should contain all the sensitive data. Add these files in `secrets/`. env file format: (replace the keywords in < > with the appropriate text. Do not include the symbols themselves, of course.)
+    - `fitbit.env`
+        ```
+        FITBIT_ACCESS_TOKEN=<fitbit token>
+        FITBIT_USER_ID=<fitbit id>
+        ```
     - `metabase.env`
-        - env file format: (replace the keywords in < > with the appropriate text. Do not include the symbols themselves, of course.)
         ```
         MB_DB_PASS=<postgres password>
         MB_DB_USER=<postgres user>
+        ```
+    - `postgres.env`
+        ```
+        POSTGRES_PASS=<postgres password>
+        POSTGRES_USER=<postgres user>
         ```
 1. Make an empty directory `db/data`.
 1. Run `docker-compose up`.
