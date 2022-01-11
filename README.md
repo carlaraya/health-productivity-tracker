@@ -14,6 +14,7 @@ An ETL pipeline & data visualization for my sleep & todo list data.
 1. Install Docker and Docker Compose.
 1. Install Evolution. Make sure Evolution has two calendars named `Todo` and `Done`. Evolution data files should be in `~/.local/share/evolution/` and `~/.config/evolution/`. Or if installing on a cloud server, use a program to sync with the data from the local device.
 1. Get Fitbit credentials from https://dev.fitbit.com/apps/oauthinteractivetutorial. Select "Implicit Grant Flow".
+1. For the Airflow Gmail credentials follow this tutorial to generate an app password https://support.google.com/mail/answer/185833?hl=en
 1. `secrets/` should contain all the sensitive data. Add these files in `secrets/`. env file format: (replace the keywords in < > with the appropriate text. Do not include the symbols themselves, of course.)
     - `fitbit.env`
         ```
@@ -29,6 +30,13 @@ An ETL pipeline & data visualization for my sleep & todo list data.
         ```
         POSTGRES_PASS=<postgres password>
         POSTGRES_USER=<postgres user>
+        ```
+    - `airflow.env`
+        ```
+        AIRFLOW__SMTP__SMTP_USER=<gmail email address>
+        AIRFLOW__SMTP__SMTP_PASSWORD=<gmail app password>
+        AIRFLOW__SMTP__SMTP_MAIL_FROM=<gmail email address>
+        AIRFLOW_MAIL_TO=<alerts receiver email address>
         ```
 1. Make an empty directory `db/data`.
 1. Run `docker-compose up`.

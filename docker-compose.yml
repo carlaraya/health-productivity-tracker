@@ -11,7 +11,7 @@ services:
     ports:
       - 5432:5432
     env_file: secrets/postgres.env
-    restart: always
+    restart: "no"
   etl:
     build:
       context: ./etl
@@ -28,6 +28,7 @@ services:
     env_file:
       - secrets/fitbit.env
       - secrets/postgres.env
+      - secrets/airflow.env
   metabase:
     image: metabase/metabase:latest
     volumes:
