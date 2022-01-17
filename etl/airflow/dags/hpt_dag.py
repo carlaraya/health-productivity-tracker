@@ -15,7 +15,7 @@ default_args = {
     'email'                 : [os.environ['AIRFLOW_MAIL_TO']]
 }
 
-with DAG('hpt_dag', default_args=default_args, schedule_interval="26 11 * * *", catchup=True) as dag:
+with DAG('hpt_dag', default_args=default_args, schedule_interval="26 3 * * *", catchup=True) as dag:
     extract_task = BashOperator(
         task_id='hpt_extract',
         bash_command='cd /etl; python3 extract.py {{ ds }}',
