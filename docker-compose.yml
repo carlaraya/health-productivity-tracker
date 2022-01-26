@@ -43,4 +43,4 @@ services:
     env_file: secrets/metabase.env
     depends_on:
       - db
-    restart: always
+    restart: "no"
