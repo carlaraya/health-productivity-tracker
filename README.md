@@ -44,8 +44,8 @@ An ETL pipeline & data visualization for my sleep & todo list data. Automaticall
 1. Make an empty directory `db/data`.
 1. Run `docker-compose up`.
 
-## Complete Setup
+## Post-installation
 1. Keep the docker compose setup running.
-1. To generate the json files, in another terminal do `docker-compose run etl python3 extract.py -s earliest yesterday`.
-1. To dump all data into postgresql database do `docker-compose run etl python3 transform_load.py -s earliest yesterday`.
-1. Open `<ip address>:3000` in the browser.
+2. Run `docker exec -it health-productivity-tracker-etl-1 bash` in another terminal instance to open a bash session in the container running Airflow. To create a new Airflow account, type `airflow users  create --role Admin --username <username> --email <admin email> --firstname <first name> --lastname <last name>`, replacing fields with appropriate info. Then exit the bash session.
+3. Open `<ip address>:8080` in the browser, login to Airflow and turn on the DAG. Wait for DAGs to finish executing.
+4. Open `<ip address>:3000` in the browser. Setup a Metabase admin account and write your own queries and data visualizations.
