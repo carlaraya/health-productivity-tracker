@@ -2,7 +2,7 @@
 
 An ETL pipeline & data visualization for my sleep & todo list data. Automatically updates daily.
 
-(https://user-images.githubusercontent.com/13644295/153356396-be1ff814-5b59-454e-bd0a-83982b7a0c9b.png)
+![image](https://user-images.githubusercontent.com/13644295/153356396-be1ff814-5b59-454e-bd0a-83982b7a0c9b.png)
 
 - Extracts todo list data from my Evolution calendar & sleep data from the Fitbit API & stores it all as json files
 - Transforms the json data into sql-friendly tuples
