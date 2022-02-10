@@ -1,6 +1,9 @@
 # Personal Health and Productivity Tracker
 
 An ETL pipeline & data visualization for my sleep & todo list data.
+
+file:///home/carl/Pictures/Screenshot_2022-02-10_14-58-49.png![image](https://user-images.githubusercontent.com/13644295/153356396-be1ff814-5b59-454e-bd0a-83982b7a0c9b.png)
+
 - Extracts todo list data from my Evolution calendar & sleep data from the Fitbit API & stores it all as json files
 - Transforms the json data into sql-friendly tuples
 - Loads the data into a PostgreSQL DB.
