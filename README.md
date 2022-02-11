@@ -15,7 +15,7 @@ An ETL pipeline & data visualization for my sleep & todo list data. Automaticall
 
 ## Installation
 1. Install Docker and Docker Compose.
-1. Install Evolution. Make sure Evolution has two calendars named `Todo` and `Done`. Evolution data files should be in `~/.local/share/evolution/` and `~/.config/evolution/`. Or if installing on a cloud server, use a program to sync with the data from the local device.
+1. Install Evolution. Make sure Evolution has two calendars named `Todo` and `Done`. Evolution data files should be in `~/.local/share/evolution/` and `~/.config/evolution/`. Or if installing on a cloud server, use a program like rsync to sync with the data from the local device.
 1. Get Fitbit credentials from https://dev.fitbit.com/apps/oauthinteractivetutorial. Select "Implicit Grant Flow".
 1. For the Airflow Gmail credentials follow this tutorial to generate an app password https://support.google.com/mail/answer/185833?hl=en
 1. `secrets/` should contain all the sensitive data. Add these files in `secrets/`. env file format: (replace the keywords in < > with the appropriate text. Do not include the symbols themselves, of course.)
@@ -49,3 +49,8 @@ An ETL pipeline & data visualization for my sleep & todo list data. Automaticall
 2. Run `docker exec -it health-productivity-tracker-etl-1 bash` in another terminal instance to open a bash session in the container running Airflow. To create a new Airflow account, type `airflow users  create --role Admin --username <username> --email <admin email> --firstname <first name> --lastname <last name>`, replacing fields with appropriate info. Then exit the bash session.
 3. Open `<ip address>:8080` in the browser, login to Airflow and turn on the DAG. Wait for DAGs to finish executing.
 4. Open `<ip address>:3000` in the browser. Setup a Metabase admin account and write your own queries and data visualizations.
+
+## Todo
+1. Write tests for ETL pipeline.
+2. Refactor ETL pipeline.
+3. Implement HTTPS in cloud server.
