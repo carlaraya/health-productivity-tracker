@@ -1,6 +1,6 @@
 # Personal Health and Productivity Tracker
 
-An ETL pipeline & data visualization for my sleep & todo list data. Automatically updates daily.
+An ETL pipeline & data visualization for my daily sleep & productivity score. Automatically updates daily.
 
 ![image](https://user-images.githubusercontent.com/13644295/153356396-be1ff814-5b59-454e-bd0a-83982b7a0c9b.png)
 
